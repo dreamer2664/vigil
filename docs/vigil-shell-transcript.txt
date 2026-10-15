@@ -1,0 +1,49 @@
+=== V-SHELL evidence transcript — python3 tools/serve.py (0.0.0.0:8790) ===
+
+--- GET / (index.html) ---
+HTTP 200 · 1608 B · content-type text/html
+--- shell assets ---
+HTTP 200 · 4454 B · /app/app.css
+HTTP 200 · 8085 B · /app/app.js
+HTTP 200 · 3084 B · /app/sw.js
+HTTP 200 · 543 B · /app/manifest.webmanifest
+HTTP 200 · 58961 B · /app/state.sample.json
+HTTP 200 · 1484 B · /icons/icon-192.png
+HTTP 200 · 4202 B · /icons/icon-512.png
+HTTP 200 · 503 B · /icons/vigil.svg
+HTTP 200 · 3736 B · /app/views/now.js
+HTTP 200 · 2190 B · /app/views/chat.js
+HTTP 200 · 2147 B · /app/views/crew.js
+HTTP 200 · 2339 B · /app/views/records.js
+HTTP 200 · 1610 B · /app/views/projects.js
+
+--- freshness math on the sample state (45/120 thresholds) ---
+  generated_ts +  0 min -> level ok       dot color green
+  generated_ts + 44 min -> level ok       dot color green
+  generated_ts + 45 min -> level ok       dot color green
+  generated_ts + 46 min -> level stale    dot color amber
+  generated_ts +119 min -> level stale    dot color amber
+  generated_ts +120 min -> level stale    dot color amber
+  generated_ts +121 min -> level bad      dot color red
+  banner chain: offline(navigator.onLine===false) > compiler warnings > sample fallback > bad(>120) > stale(>45) > clear
+
+--- manifest installability ---
+name: Vigil — the empire watchtower | display: standalone | start_url: ./
+icons: [('./icons/icon-192.png', '192x192', 'any'), ('./icons/icon-512.png', '512x512', 'any maskable')]
+icons/icon-192.png 1484 bytes — present
+icons/icon-512.png 4202 bytes — present
+icons/vigil.svg 503 bytes — present
+
+--- sw.js cache policy (VERSION bump) ---
+6:const VERSION = "vigil-v6"; // v6: best-effort install (one failed asset must not kill the SW);
+23:      .then((c) => Promise.allSettled(SHELL.map((u) => c.add(u))))
+
+--- headless boot: node tests/smoke.mjs (live) + OFFLINE=1 (SW-cache simulation) ---
+
+all good
+vigil smoke — state: live fetch
+  state: live fetch, generated 2026-10-15T14:40:11Z, warnings []
+  PASS app.js boots without throwing
+  PASS offline badge painted (banner: "offline — showing the last good copy")
+
+all good
