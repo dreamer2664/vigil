@@ -22,7 +22,7 @@ a{color:var(--link);text-decoration:none}
 .dot.bad{background:var(--bad)} .dot.unknown{background:var(--dim)}
 #fresh{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .btn{background:var(--panel-2);color:var(--text);border:1px solid var(--line);
-  border-radius:8px;padding:6px 10px;font:inherit;cursor:pointer}
+  border-radius:8px;padding:10px 14px;font:inherit;cursor:pointer;min-height:48px}
 .btn.on{background:var(--panel);border-color:var(--accent);color:var(--accent)}
 .btn.small{padding:5px 9px;font-size:.82rem}
 
@@ -32,12 +32,17 @@ a{color:var(--link);text-decoration:none}
 .banner.bad{border-color:var(--bad);color:var(--bad)}
 .hidden{display:none}
 
+/* CONTRACT 4.6: 48px touch targets, one-handed tabs */
 .tabs{position:fixed;left:0;right:0;bottom:0;display:flex;gap:var(--s1);
   padding:var(--s2) var(--s3) calc(env(safe-area-inset-bottom) + var(--s2));
   background:linear-gradient(transparent,var(--bg) 30%);z-index:6}
-.tabs button{flex:1;min-height:44px;background:var(--panel);border:1px solid var(--line);
+.tabs button{flex:1;min-height:48px;background:var(--panel);border:1px solid var(--line);
   color:var(--dim);border-radius:10px;font:inherit}
 .tabs button.on{color:var(--accent);border-color:var(--accent)}
+
+/* keyboard / switch users must see where they are */
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+@media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
 
 .card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);
   padding:var(--s3);margin:var(--s3) 0}

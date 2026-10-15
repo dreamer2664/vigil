@@ -34,21 +34,27 @@ function normalizeState(raw) {
   return fill(raw && typeof raw === "object" ? raw : {}, SHAPE);
 }
 
-/* ---------- resilient fetch --------------------------------------------- */
-async function getJSON(url, { timeout = FETCH_TIMEOUT_MS, retries = RETRIES } = {}) {
+/* ---------- resilient fetch ---------------------------------------------
+   CONTRACT 4.2: EVERY network read (state AND wires) has the 8 s timeout,
+   <=3 retries, 1s/4s/10s backoff. One helper, two callers, no exceptions. */
+const BACKOFF_MS = [1000, 4000, 10000];
+async function fetchRetry(url, { timeout = FETCH_TIMEOUT_MS, retries = RETRIES } = {}) {
   let lastErr;
   for (let i = 0; i <= retries; i++) {
     const ctl = new AbortController();
     const t = setTimeout(() => ctl.abort(), timeout);
     try {
-      const r = await fetch(url, { signal: ctl.signal, cache: "no-store" });
-      if (!r.ok) throw new Error(`HTTP ${r.status}`);
-      return await r.json();
+      return await fetch(url, { signal: ctl.signal, cache: "no-store" });
     } catch (e) { lastErr = e; }
     finally { clearTimeout(t); }
-    if (i < retries) await new Promise((res) => setTimeout(res, [1000, 4000, 10000][i] ?? 4000));
+    if (i < retries) await new Promise((res) => setTimeout(res, BACKOFF_MS[i] ?? 4000));
   }
   throw lastErr;
+}
+async function getJSON(url, opts = {}) {
+  const r = await fetchRetry(url, opts);
+  if (!r.ok) throw new Error(`HTTP ${r.status}`);
+  return await r.json();
 }
 
 /* ---------- live wires --------------------------------------------------- */
@@ -57,7 +63,7 @@ const seenIds = new Set();
 async function pollWires() {
   const jobs = Object.entries(WIRES).map(async ([key, topic]) => {
     try {
-      const r = await fetch(NTFY(topic), { cache: "no-store" });
+      const r = await fetchRetry(NTFY(topic));
       if (!r.ok) throw new Error(String(r.status));
       const text = await r.text();
       const out = [];
@@ -146,7 +152,9 @@ function paintFreshness() {
   const level = m == null ? "unknown" : m > 120 ? "bad" : m > 45 ? "stale" : "ok";
   dot.className = `dot ${level}`;
   fresh.textContent = `state ${humanMin(m)}`;
-  if (state && state.warnings?.length)
+  if (navigator.onLine === false)
+    say("offline — showing the last good copy", "bad");
+  else if (state && state.warnings?.length)
     say("compiler warnings: " + state.warnings.slice(0, 2).join(" · "), "warn");
   else if (usingSample)
     say("showing the frozen fallback copy — live state unreachable", "warn");
