@@ -1,11 +1,9 @@
 /* Vigil service worker — offline shell + last-good state.
    Policy (CONTRACT.md §4):
-   - shell (html/css/js/icons): cache-first, refreshed in the background
+   - shell (html/css/js/icons): network-first, last-good cache fallback
    - state.json: network-first (freshness is the product), fall back to cache
    - everything else: network, no caching of third parties (there are none) */
-const VERSION = "vigil-v4";   // v4: network-first shell (a fix must not wait for a cache to rotate)   // bumped 2026-10-15: the state URL moved to the
-                              // push-driven vigil-state branch; v2 drops the v1 shell cache
-                              // (skipWaiting + clients.claim below make the swap immediate)
+const VERSION = "vigil-v5"; // corrected primary-archive link; network-first shell policy retained
 const SHELL = [
   "../", "../index.html", "./app.css", "./app.js",
   "./views/now.js", "./views/chat.js", "./views/crew.js",

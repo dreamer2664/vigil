@@ -90,7 +90,7 @@ How the compiler derives things (bind these, don't invent):
   `leases` = number of cards owned with status claimed/blocked.
 - `projects`: board cards grouped by **repo**, resolved in this order (the
   board is older than tags — most legacy cards carry none):
-  1. first `tags` entry among `superocr|chatcode|storage|storagecode|vigil|empire`;
+  1. first `tags` entry among `superocr|chatcode|storage|storagecode|vigil|youtube|empire`;
   2. else walk `parent` (up to 6 hops) and apply rule 1;
   3. else title matches `\bS\d{1,2}\b` / `\bW[12]\b` / an OCR-domain word
      (OCR, captcha, reader, glyph, corrosion, snow, spiderweb, strippy,
@@ -101,8 +101,12 @@ How the compiler derives things (bind these, don't invent):
   over children; `progress` over all cards in the group.
 - `chat.tail`: newest 40 non-dm messages across channels (general + human-*),
   text truncated to 280 chars, `ts` from message.
-- `records.*`: parse `storage/PUSHES.md` table rows; tail `storagecode/wire/*.jsonl`
-  (newest file(s)); list `storage/shifts/`.
+- `records.*`: parse **`storagecode/PUSHES.md`** table rows; tail `storagecode/wire/*.jsonl`
+  (newest file(s)); list **`storagecode/shifts/`**. ONE primary archive after the
+  2026-10-15 consolidation; `storage` is retired/read-only. A legacy fallback may
+  be read only if the primary ledger is absent, with a visible compiler warning:
+  never merge competing live ledgers. `youtube` groups the video-training cards
+  and uses chatcode's source commit time (their project lives under projects/).
 - `flags.silent_agents`: agents with `alive == false`; `review_stuck`: review
   cards older than 24 h; `blocked_over_24h`: blocked cards older than 24 h.
 - `walls`: NEVER computed from memory — read the S55 bench receipts
@@ -200,3 +204,10 @@ Status colors: alive/ok → `--ok`, stale → `--warn`, dead/bad → `--bad`.
 V-STATE (compile + workflow) · V-SHELL (shell/router/PWA) · V-NOW · V-CHAT ·
 V-CREW · V-RECORDS · V-PROJECTS · V-ANDROID (+ install guide) — plus a Review
 card per high-risk piece. Take one, own its files, ship it with evidence.
+
+## 2026-10-15 — single archive cutover
+
+All record links and the compiler use dreamer2664/storagecode for ledger, shifts,
+data and wire. Historical storage project cards remain visible as legacy/read-only;
+new YouTube training jobs have their own youtube project group. Shell VERSION bumps
+for the corrected records source link. Original record schema remains v1.

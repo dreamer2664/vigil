@@ -35,7 +35,7 @@ export default {
         </div>
         <div id="reclist">${TABS.pushes(s)}</div>
         <div class="small dim" style="margin-top:8px">
-          full record: github.com/dreamer2664/storage (PUSHES.md) ·
+          full record: github.com/dreamer2664/storagecode (PUSHES.md + shifts + data) ·
           storagecode/wire (durable) · ntfy.sh/formalcode (live)
         </div>
       </div>`;
