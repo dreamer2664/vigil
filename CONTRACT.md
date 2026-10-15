@@ -22,7 +22,10 @@ then the code** — never silently.
 Rules: the app **never** calls the GitHub API, never carries a token, never
 talks to anything else. The state branch is a rolling one-commit view
 (force-pushed in place — GitHub's scheduler is unreliable here, push is the
-empire's reliable clock; history lives in the ledger, not in the branch). The state compiler runs in GitHub Actions — the public
+empire's reliable clock; history lives in the ledger, not in the branch).
+raw.githubusercontent serves it with `max-age=300`, so readers see the state
+up to ~5 minutes behind the branch — fine: the app's freshness stamp comes
+from `generated_ts` inside the file, and amber only starts at 45 minutes. The state compiler runs in GitHub Actions — the public
 repos are cloned anonymously, the job commits with the repo's own default
 token, no secret exists — and writes ONE file. A frozen
 `app/state.sample.json` ships in this repo as the offline fallback (a frozen
