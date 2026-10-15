@@ -1,0 +1,23 @@
+name: smoke
+
+# Boots the real app.js in a stub DOM against the live state on every push.
+# This is the check that would have caught 2026-10-15's "stale is not defined"
+# before the Director did: curl sees files, only a boot sees crashes.
+# No dependencies — plain node. Falls back to app/state.sample.json if the
+# network is unavailable, and says which state it used in the log.
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Boot the app headlessly
+        run: node tests/smoke.mjs

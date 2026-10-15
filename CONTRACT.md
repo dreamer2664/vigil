@@ -139,6 +139,7 @@ to the `vigil-state` branch of chatcode — which is the URL the app reads.
 | `sw.js`, `manifest.webmanifest` | V-SHELL | offline + installable |
 | `icons/*` | V-SHELL | svg source + 192/512 png |
 | `docs/ANDROID.md`, `tools/serve.py` | V-ANDROID | install guide + local server |
+| `tests/smoke.mjs` | V-SHELL | boots `app.js` headlessly in a stub DOM against the live state (no deps); run by `.github/workflows/smoke.yml` on every push — the guard for "it renders, not just parses" |
 | `CONTRACT.md` | frozen | managers only |
 
 **View module contract** (exact): each `views/<id>.js` exports
