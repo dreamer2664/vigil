@@ -3,7 +3,7 @@
    a visible banner instead of a blank page. */
 
 const STATE_URLS = [
-  "https://raw.githubusercontent.com/dreamer2664/storagecode/main/app/state.json",
+  "https://raw.githubusercontent.com/dreamer2664/chatcode/vigil-state/app/state.json",
   "./app/state.sample.json",
 ];
 const WIRES = {

@@ -14,12 +14,14 @@ frameworks, no build step.**
 | **Records** | pushes (ledger), the formalcode wire, shift notes |
 | **Projects** | progress per sub-project, including this one |
 
-The live state is compiled by `dreamer2664/storagecode` every 20 minutes
-(`tools/build_state.py` + `.github/workflows/state.yml` — no secrets; the public
-repos are cloned anonymously) and published to
-`raw.githubusercontent.com/dreamer2664/storagecode/main/app/state.json`,
-which is exactly the URL the app reads. `app/state.sample.json` is only the
-offline fallback.
+The live state is compiled by `dreamer2664/storagecode`'s compiler
+(`tools/build_state.py`) and republished by
+`chatcode/.github/workflows/vigil-state.yml` **on every push to chatcode main**
+— push is the empire's reliable clock; GitHub's cron here is hours late — to
+the rolling `vigil-state` branch:
+`raw.githubusercontent.com/dreamer2664/chatcode/vigil-state/app/state.json`,
+which is exactly the URL the app reads. No secrets anywhere (public repos,
+anonymous clones). `app/state.sample.json` is only the offline fallback.
 
 ## How it works (30 seconds)
 

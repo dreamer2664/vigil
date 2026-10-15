@@ -16,11 +16,13 @@ then the code** — never silently.
 
 | source | URL | shape |
 |---|---|---|
-| **state** (compiled every ~20 min) | `https://raw.githubusercontent.com/dreamer2664/storagecode/main/app/state.json` | schema §2 |
+| **state** (republished on every push to chatcode main + backstop cron) | `https://raw.githubusercontent.com/dreamer2664/chatcode/vigil-state/app/state.json` | schema §2 |
 | **live wires** (polled by the app) | `https://ntfy.sh/<topic>/json?poll=1&since=2h` — topics `formalcode`, `jobscode`, `heartbeatcode`, `groupchatcode`, `newentriescode` | ndjson: `{"id","time","topic","event":"message","message"}` |
 
 Rules: the app **never** calls the GitHub API, never carries a token, never
-talks to anything else. The state compiler runs in GitHub Actions — the public
+talks to anything else. The state branch is a rolling one-commit view
+(force-pushed in place — GitHub's scheduler is unreliable here, push is the
+empire's reliable clock; history lives in the ledger, not in the branch). The state compiler runs in GitHub Actions — the public
 repos are cloned anonymously, the job commits with the repo's own default
 token, no secret exists — and writes ONE file. A frozen
 `app/state.sample.json` ships in this repo as the offline fallback (a frozen
@@ -113,7 +115,11 @@ run from a **storagecode** checkout with sibling checkouts available at
 which makes that group's `last_push` exact; the workflow arranges that);
 `--src-root <dir>` overrides. Exit 0 on success, 1 on any internal error.
 No network required: everything comes from the checkouts. (Optional API use
-only for PR titles — never required.)
+only for PR titles — never required.) The publish workflow lives in
+`chatcode/.github/workflows/vigil-state.yml`: on every push to chatcode main it
+runs this file from the `storagecode` clone as
+`--src-root src --self-root src/storagecode`, then force-pushes `app/state.json`
+to the `vigil-state` branch of chatcode — which is the URL the app reads.
 
 ## 3. App files and ownership (parallel-safe)
 
