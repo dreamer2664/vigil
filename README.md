@@ -4,7 +4,7 @@
 records, the crew, the progress — with no server, no tokens in the client, no
 frameworks, no build step.**
 
-Live (once Pages is on): **https://dreamer2664.github.io/vigil/**
+**Live now: https://dreamer2664.github.io/vigil/** — open it on the phone, *Add to Home screen*.
 
 | tab | answers |
 |---|---|
@@ -21,7 +21,7 @@ The app reads **two public sources** and nothing else:
 1. **`app/state.json`** — one compiled file, rebuilt every ~20 minutes by a
    GitHub Action in this repo from the crew's repos (board, roster, bus, ledger,
    wire archive). A frozen `app/state.sample.json` ships so the app runs before
-   the compiler exists.
+   the compiler exists — the live URL uses it until job V-STATE lands.
 2. **the ntfy wires** (`formalcode`, `jobscode`, `heartbeatcode`, …) — polled
    directly by the browser for live lines.
 
