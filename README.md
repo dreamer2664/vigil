@@ -14,6 +14,13 @@ frameworks, no build step.**
 | **Records** | pushes (ledger), the formalcode wire, shift notes |
 | **Projects** | progress per sub-project, including this one |
 
+The live state is compiled by `dreamer2664/storagecode` every 20 minutes
+(`tools/build_state.py` + `.github/workflows/state.yml` — no secrets; the public
+repos are cloned anonymously) and published to
+`raw.githubusercontent.com/dreamer2664/storagecode/main/app/state.json`,
+which is exactly the URL the app reads. `app/state.sample.json` is only the
+offline fallback.
+
 ## How it works (30 seconds)
 
 The app reads **two public sources** and nothing else:

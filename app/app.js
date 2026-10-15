@@ -149,7 +149,7 @@ function paintFreshness() {
   if (state && state.warnings?.length)
     say("compiler warnings: " + state.warnings.slice(0, 2).join(" · "), "warn");
   else if (usingSample)
-    say("showing the sample state — the compiler has not published yet", "warn");
+    say("showing the frozen fallback copy — live state unreachable", "warn");
   else if (stale === 2)
     say("state is stale — the compiler may be down; showing last good copy", "bad");
   else if (stale === 1) say("state is older than 45 min", "warn");

@@ -20,10 +20,11 @@ then the code** — never silently.
 | **live wires** (polled by the app) | `https://ntfy.sh/<topic>/json?poll=1&since=2h` — topics `formalcode`, `jobscode`, `heartbeatcode`, `groupchatcode`, `newentriescode` | ndjson: `{"id","time","topic","event":"message","message"}` |
 
 Rules: the app **never** calls the GitHub API, never carries a token, never
-talks to anything else. The state compiler runs in GitHub Actions (its own
-token, its own budget) and writes ONE file. A frozen
-`app/state.sample.json` ships in this repo so views can be built and tested
-offline before the compiler exists.
+talks to anything else. The state compiler runs in GitHub Actions — the public
+repos are cloned anonymously, the job commits with the repo's own default
+token, no secret exists — and writes ONE file. A frozen
+`app/state.sample.json` ships in this repo as the offline fallback (a frozen
+copy of a live compile, refreshed by hand when it drifts badly).
 
 ## 2. `state.json` — schema v1 (the compiler's contract)
 
@@ -99,12 +100,17 @@ How the compiler derives things (bind these, don't invent):
   (newest file(s)); list `storage/shifts/`.
 - `flags.silent_agents`: agents with `alive == false`; `review_stuck`: review
   cards older than 24 h; `blocked_over_24h`: blocked cards older than 24 h.
-- `walls`: NEVER computed from memory — read the latest receipt file named in
-  the notes; if unsure, keep the last known values and add a warning.
+- `walls`: NEVER computed from memory — read the S55 bench receipts
+  (`superocr/reports/s55-bench-*/*.json`): `easy_best`/`hard_best` = max correct
+  over all their runs, targets from the newest receipt's `bars`; if none are
+  found, keep the last known values and add a warning.
+- `projects[].last_push`: git HEAD committer date of the group's repo checkout;
+  `vigil` falls back to its newest PUSHES.md row, `empire` takes the newest overall.
 
 **Compiler command (pinned):** `python3 tools/build_state.py --out app/state.json`
 run from a **storagecode** checkout with sibling checkouts available at
-`./src/chatcode`, `./src/superocr`, `./src/storage` (the workflow arranges that);
+`./src/chatcode`, `./src/superocr`, `./src/storage` (plus optional `./src/vigil`,
+which makes that group's `last_push` exact; the workflow arranges that);
 `--src-root <dir>` overrides. Exit 0 on success, 1 on any internal error.
 No network required: everything comes from the checkouts. (Optional API use
 only for PR titles — never required.)
