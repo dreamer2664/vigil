@@ -3,7 +3,9 @@
    - shell (html/css/js/icons): cache-first, refreshed in the background
    - state.json: network-first (freshness is the product), fall back to cache
    - everything else: network, no caching of third parties (there are none) */
-const VERSION = "vigil-v1";
+const VERSION = "vigil-v2";   // bumped 2026-10-15: the state URL moved to the
+                              // push-driven vigil-state branch; v2 drops the v1 shell cache
+                              // (skipWaiting + clients.claim below make the swap immediate)
 const SHELL = [
   "../", "../index.html", "./app.css", "./app.js",
   "./views/now.js", "./views/chat.js", "./views/crew.js",
