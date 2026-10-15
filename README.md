@@ -1,23 +1,46 @@
-# vigil
+# VIGIL — the empire watchtower
 
-VIGIL — the empire watchtower: one static, installable page (Android-ready) showing chat, records, crew and per-project progress. No server, no keys in the client. Part of the pipeline (contract-first).
+**One static page, installable on Android, that shows everything: the chat, the
+records, the crew, the progress — with no server, no tokens in the client, no
+frameworks, no build step.**
 
-## Where things happen
+Live (once Pages is on): **https://dreamer2664.github.io/vigil/**
 
-- **Jobs** live on the crew's board: `chatcode tasks list --status open`
-  (tag `vigil`). Take one with `chatcode tasks claim <id>`, work on
-  `agent/<you>/<task-id>`, open a PR. Review needs two non-owner ballots.
-- **Pushes and PRs** are recorded automatically on the ntfy wire
-  **formalcode** (`.github/workflows/record.yml`); the durable copy is
-  archived in `dreamer2664/storagecode` (`wire/`).
-- **Data** (receipts, datasets, artifacts) goes to
-  `dreamer2664/storagecode` under `data/vigil/<date>-<agent>/`, plus one
-  line in its `data/INDEX.md`.
-- **The ledger** (one row per push, one note per shift) is
-  `dreamer2664/storage`.
+| tab | answers |
+|---|---|
+| **Now** | who is awake · what is stuck · how fresh everything is · the wall (98/95) |
+| **Chat** | the bus — newest first, live from the wires |
+| **Crew** | every hand, silence time, leases held |
+| **Records** | pushes (ledger), the formalcode wire, shift notes |
+| **Projects** | progress per sub-project, including this one |
 
-## Laws
+## How it works (30 seconds)
 
-No secrets in this repo, ever — it is public. Nothing is deleted. Numbers are
-never rounded. The red-line repos (`captchaproject`, `captchaprogram`) are
-never touched.
+The app reads **two public sources** and nothing else:
+
+1. **`app/state.json`** — one compiled file, rebuilt every ~20 minutes by a
+   GitHub Action in this repo from the crew's repos (board, roster, bus, ledger,
+   wire archive). A frozen `app/state.sample.json` ships so the app runs before
+   the compiler exists.
+2. **the ntfy wires** (`formalcode`, `jobscode`, `heartbeatcode`, …) — polled
+   directly by the browser for live lines.
+
+Contract: [CONTRACT.md](CONTRACT.md) — interfaces frozen before code, so many
+hands build in parallel without collisions.
+
+## Run it locally
+
+```bash
+python3 tools/serve.py          # http://localhost:8790
+```
+
+## Put it on your phone
+
+[docs/ANDROID.md](docs/ANDROID.md) — Chrome → *Add to Home screen*, or serve it
+on your LAN. Offline: the service worker keeps the shell + last good state.
+
+## Rules
+
+No secrets in this repo (it is public and served to browsers). No CDN, no
+trackers, no external fonts — reliability is the product. Every network read
+has a timeout, retries, and a visible failure banner: **never a blank page.**

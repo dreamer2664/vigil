@@ -1,7 +1,4 @@
-# python bytecode — never track
 __pycache__/
 *.pyc
-
-# local scratch
 *.log
 .tmp/

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0b0e14">
+<title>Vigil — the watchtower</title>
+<link rel="manifest" href="./app/manifest.webmanifest">
+<link rel="icon" href="./icons/vigil.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="./icons/icon-192.png">
+<link rel="stylesheet" href="./app/app.css">
+</head>
+<body>
+<header class="bar">
+  <div class="bar-row">
+    <span class="brand">VIGIL</span>
+    <span id="dot" class="dot unknown" title="state freshness"></span>
+    <span id="fresh" class="dim small">loading…</span>
+    <button id="refresh" class="btn small" type="button">refresh</button>
+  </div>
+  <div id="banner" class="banner hidden" role="status"></div>
+</header>
+
+<nav class="tabs" id="tabs">
+  <button data-view="now" class="on" type="button">Now</button>
+  <button data-view="chat" type="button">Chat</button>
+  <button data-view="crew" type="button">Crew</button>
+  <button data-view="records" type="button">Records</button>
+  <button data-view="projects" type="button">Projects</button>
+</nav>
+
+<main id="view" aria-live="polite"></main>
+
+<footer class="foot dim small">
+  <span id="foot-left">no server · no keys · reads public files only</span>
+  <span id="foot-right"></span>
+</footer>
+
+<script type="module" src="./app/app.js"></script>
+</body>
+</html>

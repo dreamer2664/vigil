@@ -1,0 +1,71 @@
+/* Vigil — tokens per CONTRACT.md §5. Dark first, phone first. */
+:root{
+  --bg:#0b0e14; --panel:#131826; --panel-2:#1a2133; --line:#232c42;
+  --text:#e8ecf1; --dim:#8b95a7; --accent:#6ee7b7; --link:#93c5fd;
+  --ok:#34d399; --warn:#fbbf24; --bad:#f87171; --info:#60a5fa;
+  --r:12px; --s1:4px; --s2:8px; --s3:12px; --s4:16px; --s5:24px;
+  --mono:ui-monospace,SFMono-Regular,Menlo,monospace;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:var(--sans);font-size:16px}
+body{padding:calc(env(safe-area-inset-top) + var(--s2)) var(--s3) calc(env(safe-area-inset-bottom) + 84px)}
+a{color:var(--link);text-decoration:none}
+.dim{color:var(--dim)} .small{font-size:.82rem}
+.mono{font-family:var(--mono)}
+
+.bar{position:sticky;top:0;background:linear-gradient(var(--bg) 82%,transparent);z-index:5;padding-bottom:var(--s2)}
+.bar-row{display:flex;align-items:center;gap:var(--s2)}
+.brand{font-weight:700;letter-spacing:.14em;color:var(--accent)}
+.dot{width:10px;height:10px;border-radius:50%;display:inline-block}
+.dot.ok{background:var(--ok)} .dot.stale{background:var(--warn)}
+.dot.bad{background:var(--bad)} .dot.unknown{background:var(--dim)}
+#fresh{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.btn{background:var(--panel-2);color:var(--text);border:1px solid var(--line);
+  border-radius:8px;padding:6px 10px;font:inherit;cursor:pointer}
+.btn.on{background:var(--panel);border-color:var(--accent);color:var(--accent)}
+.btn.small{padding:5px 9px;font-size:.82rem}
+
+.banner{margin-top:var(--s2);padding:var(--s2) var(--s3);border-radius:8px;
+  border:1px solid var(--line);background:var(--panel-2);font-size:.88rem}
+.banner.warn{border-color:var(--warn);color:var(--warn)}
+.banner.bad{border-color:var(--bad);color:var(--bad)}
+.hidden{display:none}
+
+.tabs{position:fixed;left:0;right:0;bottom:0;display:flex;gap:var(--s1);
+  padding:var(--s2) var(--s3) calc(env(safe-area-inset-bottom) + var(--s2));
+  background:linear-gradient(transparent,var(--bg) 30%);z-index:6}
+.tabs button{flex:1;min-height:44px;background:var(--panel);border:1px solid var(--line);
+  color:var(--dim);border-radius:10px;font:inherit}
+.tabs button.on{color:var(--accent);border-color:var(--accent)}
+
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);
+  padding:var(--s3);margin:var(--s3) 0}
+.card h2{margin:0 0 var(--s2);font-size:.95rem;letter-spacing:.06em;color:var(--dim);
+  text-transform:uppercase;font-weight:600}
+.card h3{margin:var(--s3) 0 var(--s1);font-size:.9rem}
+.row{display:flex;align-items:center;gap:var(--s2);padding:var(--s1) 0;min-height:32px}
+.row .grow{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.chips{display:flex;flex-wrap:wrap;gap:var(--s2)}
+.chip{padding:3px 9px;border-radius:999px;background:var(--panel-2);border:1px solid var(--line);font-size:.82rem}
+.chip.ok{color:var(--ok);border-color:color-mix(in srgb,var(--ok) 45%,var(--line))}
+.chip.warn{color:var(--warn);border-color:color-mix(in srgb,var(--warn) 45%,var(--line))}
+.chip.bad{color:var(--bad);border-color:color-mix(in srgb,var(--bad) 45%,var(--line))}
+.chip.info{color:var(--info);border-color:color-mix(in srgb,var(--info) 45%,var(--line))}
+
+.bar-track{height:8px;background:var(--panel-2);border-radius:999px;overflow:hidden;border:1px solid var(--line)}
+.bar-fill{height:100%;background:var(--accent)}
+.bar-fill.warn{background:var(--warn)} .bar-fill.bad{background:var(--bad)}
+
+.msg{padding:var(--s2) 0;border-bottom:1px solid var(--line)}
+.msg:last-child{border-bottom:0}
+.msg .meta{display:flex;gap:var(--s2);align-items:baseline;font-size:.78rem;color:var(--dim)}
+.msg .who{color:var(--accent);font-weight:600}
+.msg .text{white-space:pre-wrap;word-break:break-word;margin-top:2px;font-size:.92rem}
+
+.empty{color:var(--dim);padding:var(--s4) 0;text-align:center}
+.foot{display:flex;justify-content:space-between;gap:var(--s2);padding:var(--s4) 0}
+.subtabs{display:flex;gap:var(--s2);margin-bottom:var(--s2)}
+@media (min-width:760px){
+  body{max-width:880px;margin:0 auto}
+}
