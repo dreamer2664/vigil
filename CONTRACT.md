@@ -168,7 +168,11 @@ each capped at 30 newest, deduped by ntfy `id`.
    missing key from the sample shape; a broken compile must not break the app.
 5. **Offline:** service worker caches the shell + last good state; app opens
    and renders the cached state with an "offline — last good copy" badge.
-   Update policy: network-first for `state.json`, cache-first for shell.
+   Update policy: **network-first everywhere, cache as the fallback.** The
+   shell is ~40 KB; a failed fetch falls back to the cache instantly, so
+   offline is unchanged — while a shipped fix lands on the very next load.
+   (2026-10-15: a shell bug outlived its fix because cache-first kept
+   serving it; the fix must never be the thing that waits.)
 6. **Phone-first:** viewport-fit=cover, safe-area insets, 16px base, 48px
    touch targets, tabs reachable one-handed; no horizontal scroll anywhere.
 7. **Lists** cap their DOM (render ≤60 rows, "show more" after) — 200+ cards

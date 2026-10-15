@@ -3,7 +3,7 @@
    - shell (html/css/js/icons): cache-first, refreshed in the background
    - state.json: network-first (freshness is the product), fall back to cache
    - everything else: network, no caching of third parties (there are none) */
-const VERSION = "vigil-v3";   // v3: paints freshness from the computed level (v2 shell could throw stale-is-not-defined on a clean compile)   // bumped 2026-10-15: the state URL moved to the
+const VERSION = "vigil-v4";   // v4: network-first shell (a fix must not wait for a cache to rotate)   // bumped 2026-10-15: the state URL moved to the
                               // push-driven vigil-state branch; v2 drops the v1 shell cache
                               // (skipWaiting + clients.claim below make the swap immediate)
 const SHELL = [
@@ -41,15 +41,18 @@ self.addEventListener("fetch", (e) => {
     return;
   }
   if (url.origin === location.origin) {
+    /* network-first, cache fallback: the fix must land on the next load; the
+       cache exists for offline, not for keeping yesterday's bug alive */
     e.respondWith(
-      caches.match(e.request).then((hit) => {
-        const net = fetch(e.request).then((r) => {
-          const copy = r.clone();
-          caches.open(VERSION).then((c) => c.put(e.request, copy));
+      fetch(e.request)
+        .then((r) => {
+          if (r && r.ok) {
+            const copy = r.clone();
+            caches.open(VERSION).then((c) => c.put(e.request, copy));
+          }
           return r;
-        }).catch(() => hit);
-        return hit || net;
-      })
+        })
+        .catch(() => caches.match(e.request).then((hit) => hit || Response.error()))
     );
   }
   /* ntfy and raw.githubusercontent.com pass straight through (no caching:
