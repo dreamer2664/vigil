@@ -9,6 +9,10 @@
  *
  * Usage:  node tests/smoke.mjs            (fetches the live state, falls back to the sample)
  *         STATE_FILE=/path/state.json node tests/smoke.mjs   (pin a state file)
+ *         OFFLINE=1 node tests/smoke.mjs     (simulate the SW cache: first pass caches
+ *                                            state, then the network dies + navigator.onLine
+ *                                            is false — must boot on the cached copy and
+ *                                            paint the offline badge, CONTRACT 4.5)
  * Exits 0 only if: boot clean, all five tabs render, footer/freshness painted.
  */
 
@@ -45,6 +49,9 @@ if (process.env.STATE_FILE) {
   }
 }
 notes.push(`  state: ${stateSource}, generated ${stateObj.generated_ts}, warnings ${JSON.stringify(stateObj.warnings)}`);
+
+/* ---------- offline mode? ----------------------------------------------- */
+const OFFLINE = process.env.OFFLINE === "1";
 
 /* ---------- 3. stub DOM -------------------------------------------------- */
 function makeEl(tag = "div") {
@@ -87,28 +94,56 @@ const documentStub = {
 };
 globalThis.document = documentStub;
 globalThis.window = globalThis;
-globalThis.navigator = {};                    // no serviceWorker: LAN/http path also valid
+globalThis.navigator = OFFLINE ? { onLine: false } : {};   // no serviceWorker: LAN/http path also valid
 globalThis.location = { href: "https://smoke.local/", origin: "https://smoke.local" };
 globalThis.addEventListener = () => {};       // window.addEventListener no-ops
 
 /* ---------- 4. fetch stub ------------------------------------------------- */
+/* OFFLINE=1: the first state fetch populates a "cache", then the network dies
+   exactly like a phone that lost signal — fetch rejects, the stub plays the
+   service worker's part (serve the last good copy), navigator.onLine is false. */
+const swCache = new Map();
+let networkUp = true;
 globalThis.fetch = async (url) => {
   const u = String(url);
+  if (OFFLINE && u.includes("state.json") && !u.includes("sample")) {
+    if (networkUp) {
+      swCache.set(u, stateObj);
+      return { ok: true, status: 200, json: async () => stateObj };
+    }
+    if (swCache.has(u)) return { ok: true, status: 200, json: async () => swCache.get(u) };
+    throw new TypeError("fetch failed (offline)");
+  }
   if (u.includes("state.json") || u.includes("state.sample.json")) {
     return { ok: true, status: 200, json: async () => stateObj };
   }
-  if (u.includes("ntfy.sh")) return { ok: true, status: 200, text: async () => "" };
+  if (u.includes("ntfy.sh")) {
+    if (OFFLINE && !networkUp) throw new TypeError("fetch failed (offline)");
+    return { ok: true, status: 200, text: async () => "" };
+  }
+  if (OFFLINE && !networkUp) throw new TypeError("fetch failed (offline)");
   return { ok: false, status: 404, json: async () => ({}) };
 };
 
 /* ---------- 5. boot the real module -------------------------------------- */
+if (OFFLINE) {
+  /* pass 1: online, primes the SW cache; then the network dies and a FRESH
+     copy of the app module (cache-busted) must boot against the dark network */
+  await import(path.join(tmp, "app", "app.js"));
+  networkUp = false;
+}
 let bootErr = null;
 try {
-  await import(path.join(tmp, "app", "app.js"));
+  const bust = `?offline-${Date.now()}`;
+  await import(path.join(tmp, "app", "app.js") + bust);
 } catch (e) {
   bootErr = e;
 }
 ok(!bootErr, "app.js boots without throwing" + (bootErr ? ` (${bootErr.message})` : ""));
+if (OFFLINE) ok(/offline — showing the last good copy/.test(byId["banner"].textContent || ""),
+  `offline badge painted (banner: ${JSON.stringify(byId["banner"].textContent)})`);
+if (OFFLINE) ok(/^state /.test(byId["fresh"].textContent || ""),
+  `freshness painted from the cached copy (got: ${JSON.stringify(byId["fresh"].textContent)})`);
 
 const banner = byId["banner"].textContent || "";
 const fresh = byId["fresh"].textContent || "";
